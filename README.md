@@ -5,7 +5,7 @@
  
  # `Website`
  
-[a link](sairash.github.io/mixio-tv)
+[Demo Link](sairash.github.io/mixio-tv)
  
 # ` Demo Gif`
 <img src="screenshots/Demo Mixio-tv.gif"><br/>
