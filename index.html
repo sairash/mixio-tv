@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Mixio.tv</title>
+   <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+   <link href="css/videojs-upnext.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+   <link rel="preconnect" href="https://fonts.gstatic.com">
+   <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+   <noscript>
+      <meta http-equiv="refresh" content="0; url=/noscript" />
+   </noscript>
+   <link rel="stylesheet" href="https://unpkg.com/videojs-overlay-buttons@latest/dist/videojs-overlay-buttons.css" />
+   <title>Mixio.tv</title>
+</head>
+<style type="text/css">
+  *::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 5px;
+    background-color: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 15px;
+  }
+
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Varela Round', sans-serif;
+    overflow: hidden;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  *:focus {
+    outline: none;
+  }
+
+  body {
+    height: 100vh;
+  }
+
+  .backdrop-blur {
+    background-color: rgba(255, 255, 255, .6);
+  }
+
+  .backdrop-black {
+    background-color: rgba(0, 0, 0, .6);
+  }
+
+  .fa.custom-fa {
+    -webkit-text-stroke-width: .8px;
+    font-size: 25px;
+    -webkit-text-stroke-color: white;
+    color: transparent;
+  }
+
+
+  /* if backdrop support: very transparent and blurred */
+
+  @supports ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+    .backdrop-black {
+      background-color: rgba(0, 0, 0, 0);
+    }
+    .backdrop-blur {
+      background-color: rgba(255, 255, 255, 0);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+    }
+  }
+
+  .video_played {
+    position: absolute;
+    left: 22px;
+    background-color: white;
+    width: 75%;
+    height: 3px;
+    max-width: 74.24%;
+  }
+
+
+  /* video player */
+
+  .videoMixio {
+    --videoMixio--primary: #fff;
+    --videoMixio--secondary: #cccccc;
+  }
+
+  .videoMixio {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .videoMixio .vjs-volume-panel {
+    display: none !important;
+  }
+
+  .videoMixio .vjs-mouse-display {
+    display: block !important;
+  }
+
+  .videoMixio .vjs-picture-in-picture-control {
+    display: none !important;
+  }
+
+  .videoMixio .vjs-poster {
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .videoMixio .vjs-big-play-button {
+    width: 70px;
+    height: 70px;
+    background: none;
+    line-height: 70px;
+    font-size: 80px;
+    border: none;
+    top: 50%;
+    left: 50%;
+    margin-top: -35px;
+    margin-left: -35px;
+    color: var(--videoMixio--primary)
+  }
+
+  .videoMixio.vjs-big-play-button:focus,
+  .videoMixio:hover .vjs-big-play-button {
+    background-color: transparent;
+    color: #fff
+  }
+
+  .videoMixio .topcontainer {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 20px);
+    height: 20px;
+    margin: 10px 10px 0px 10px;
+  }
+
+  .videoMixio .topcontainer .vjs-progress-holder {
+    border-radius: 35px 0px 0px 35px;
+    margin-top: 21px;
+    width: 100%;
+    height: 3px;
+    background-color: #cccccc;
+    cursor: pointer;
+  }
+
+  @-webkit-keyframes scale {
+    0% {
+      -webkit-transform: scale(0);
+    }
+    50% {
+      -webkit-transform: scale(1);
+    }
+  }
+
+  @-webkit-keyframes glow {
+    from {
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #7f0e1f, 0 0 40px #7f0e1f, 0 0 50px #7f0e1f, 0 0 60px #7f0e1f, 0 0 70px #7f0e1f;
+    }
+    to {
+      text-shadow: 0 0 20px #fff, 0 0 30px #b4142c, 0 0 40px #b4142c, 0 0 50px #b4142c, 0 0 60px #b4142c, 0 0 70px #b4142c, 0 0 80px #b4142c;
+    }
+  }
+
+  .videoMixio .topcontainer .vjs-remaining-time {
+    padding-left: 10px;
+    color: white;
+    font-family: 'Varela Round', sans-serif;
+    cursor: default;
+    font-size: 15px;
+  }
+
+  .videoMixio .bottomcontainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+  }
+
+  .videoMixio .SongInfo {
+    padding-top: 8px;
+    padding-left: 10px;
+    width: 50%;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Varela Round', sans-serif;
+    cursor: default;
+  }
+
+  .videoMixio .SongInfo span {
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .videoMixio .SongInfo span:hover {
+    border-bottom: 2px solid;
+  }
+
+  .videoMixio .musicController {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .videoMixio .musicControllerCenter {
+    width: 100%;
+    max-width: 250px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+  }
+
+  .videoMixio .musicControllerUndo {
+    margin-top: 12px;
+    font-size: 16px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+
+  .videoMixio .musicControllerRedo {
+    margin-top: 12px;
+    font-size: 16px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  .videoMixio .musicControllermarginTop {
+    font-size: 16px;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+
+  .videoMixio .bottomcontainer .vjs-play-control {
+    margin-top: 10px;
+    font-size: 1.3em;
+  }
+
+  .videoMixio .bottomcontainer .vjs-play-control .vjs-icon-placeholder:before {
+    height: 1.3em;
+    width: 1.3em;
+    top: -3px;
+    border-radius: 1em;
+    left: 9px;
+    line-height: 1.1;
+  }
+
+  .videoMixio .bottomcontainer .vjs-fullscreen-control {
+    margin-top: 10px;
+    font-size: 1.3em;
+  }
+
+  .videoMixio .bottomcontainer .vjs-fullscreen-control .vjs-icon-placeholder:before {
+    height: 1.3em;
+    width: .5em;
+    top: -3px;
+    border-radius: 1em;
+    left: 9px;
+    line-height: 1.1;
+  }
+
+  .videoMixio .secondaryController {
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .videoMixio .secondaryControllerEnd {
+    width: 100%;
+    max-width: 90px;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 10px;
+  }
+
+  .videoMixio .secondaryControllerEndInner {
+    margin-top: 10px;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .videoMixio .vjs-control-bar {
+    background-color: transparent !important;
+  }
+
+  .videoMixio .topBarGoBack {
+    position: fixed;
+    top: 0px !important;
+    width: 100%;
+    height: 50px;
+    z-index: 10;
+  }
+
+  .videoMixio .topBarGoBackInner {
+    margin: 15px 0 0 15px;
+    justify-content: space-between;
+  }
+
+  .videoMixio .topBarGoBackButtonStart {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .videoMixio .topBarGoBackButtonStart div {
+    font-size: 20px;
+    color: white;
+    font-family: 'Varela Round';
+    cursor: pointer;
+  }
+
+
+  /* videoPlayer Ends */
+
+
+  /* MusicPlayer Starts */
+
+  .playerContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+    transition: 0.5s ease;
+    z-index: 2;
+  }
+
+  .topcontainer {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 20px);
+    height: 20px;
+    margin: 10px 10px 0px 10px;
+  }
+
+  .timeControllerContainer {
+    border-radius: 35px 0px 0px 35px;
+    margin-top: 8px;
+    width: 100%;
+    height: 5px;
+    background-color: #cccccc;
+    cursor: pointer;
+  }
+
+  .payedTimeControllerContainer {
+    position: absolute;
+    height: 5px;
+    width: 0%;
+    background-color: white;
+  }
+
+  .playerTimePosition {
+    width: 0px;
+    height: 0px;
+    background-color: white;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+  }
+
+  .timeControllerContainer:hover .playerTimePosition {
+    -webkit-animation: scale .2s ease-out;
+    height: 12px;
+    width: 5px;
+    top: -3px;
+    right: -5px;
+  }
+
+  .EndTimeControllerContainer {
+    padding-left: 10px;
+    color: white;
+    font-family: 'Varela Round', sans-serif;
+    cursor: default;
+  }
+
+  .bottomcontainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+  }
+
+  .SongInfo {
+    padding-top: 8px;
+    padding-left: 10px;
+    width: 50%;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Varela Round', sans-serif;
+    cursor: default;
+  }
+
+  .SongInfo span {
+    cursor: pointer;
+  }
+
+  .SongInfo span:hover {
+    border-bottom: 2px solid;
+  }
+
+  .musicController {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .musicControllerCenter {
+    width: 100%;
+    max-width: 250px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+  }
+
+  .musicControllerUndo {
+    margin-top: 12px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+
+  .musicControllerRedo {
+    margin-top: 12px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  .musicControllermarginTop {
+    margin-top: 12px;
+    cursor: pointer;
+  }
+
+  .musicControllerPlayButton {
+    margin-top: 8px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .secondaryController {
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .secondaryControllerEnd {
+    width: 100%;
+    max-width: 90px;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 10px;
+  }
+
+  .secondaryControllerEndInner {
+    margin-top: 10px;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .smallDisplayNone {
+    display: block;
+  }
+
+  .displaynone235px {
+    display: block;
+  }
+
+  @media only screen and (max-width: 400px) {
+    .smallDisplayNone {
+      display: none;
+    }
+    .secondaryController {
+      width: 40px;
+      padding-left: 20px;
+    }
+  }
+
+  @media only screen and (max-width: 235px) {
+    .displaynone235px {
+      display: none;
+    }
+  }
+
+
+  /* MusicPlayer Ends */
+
+
+  /* Play Button */
+
+  .playButtonMainVideo {
+    width: 40px;
+    height: 40px;
+    font-size: 45px;
+    color: white;
+    z-index: 20;
+    position: absolute;
+    top: 5px;
+    left: 14.5px;
+  }
+
+  .playButtonMainVideo div i {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+  }
+
+  .playbuttonMainVideo:hover {
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+
+  .playButtonMain {
+    width: 40px;
+    height: 40px;
+    font-size: 45px;
+    margin: auto;
+    color: white;
+    z-index: 20;
+  }
+
+  .playButtonMain div i {
+    cursor: pointer;
+    position: absolute;
+    top: 47%;
+    color: white;
+    text-decoration: none;
+  }
+
+  .playbuttonMain:hover {
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+
+  .ticketButtonMain {
+    width: 40px;
+    height: 40px;
+    font-size: 45px;
+    margin: auto;
+    color: white;
+    z-index: 20;
+  }
+
+  .ticketButtonMain div i {
+    cursor: pointer;
+    position: absolute;
+    top: 55%;
+    color: white;
+    text-decoration: none;
+  }
+
+  .ticketbuttonMain:hover {
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+
+
+  /* Play Button Ends */
+
+
+  /* Left Sidenar */
+
+  .leftSideBar {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 150px;
+    height: 100%;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+  }
+
+  .logo_container {
+    display: flex;
+    justify-content: center;
+    width: 150px;
+  }
+
+  .logo_container a img {
+    width: 25px;
+  }
+
+  .leftSideBar_Inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 10px;
+  }
+
+  .leftSideBar_contents a {
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    padding: 10px 0px 10px 0px;
+  }
+
+  .leftSideBar_contents .active {
+    border-right: solid 3px;
+  }
+
+
+  /* Left Sidebar Ends */
+
+
+  /* Right Sidebar Ends */
+
+  .rightSideBarTopItem {
+    position: absolute;
+    right: 0;
+    width: 250px;
+    padding: 20px 10px 10px 10px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, .3);
+    z-index: 3;
+  }
+
+  .rightSideBarTopItem div {
+    margin: 0px 5px 0 5px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .rightSideBarTopItem div i {
+    margin-top: 3px;
+  }
+
+  .rightSideBarTopItem div span {
+    margin-left: -2px;
+    position: absolute;
+    font-size: 10px;
+    background-color: red;
+    width: 12px;
+    border-radius: 100%;
+  }
+
+  .rightSideBarTopItemRight {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .rightSideBarTopItemRight div i {
+    margin-top: 3px;
+  }
+
+  .rightSideBarTopItemRight div span {
+    margin-left: -2px;
+    position: absolute;
+    font-size: 10px;
+    background-color: red;
+    width: 12px;
+    border-radius: 100%;
+  }
+
+  .rightSideBar {
+    padding: 60px 0px 10px 0px;
+    position: absolute;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+    overflow: auto;
+    z-index: 2;
+  }
+
+  .rightSideBarInner {
+    display: flex;
+    justify-content: center;
+  }
+
+  .rightSideBarInnerContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 70px;
+  }
+
+  .rightSideBarInnerContainer .card {
+    margin: 20px 0px 0px 0px;
+  }
+
+  .rightSideBarInnerContainer .card a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .rightSideBarInnerContainer .card a div {
+    width: 200px;
+  }
+
+  .rightSideBarTopItemRightUserDropDown {
+    display: none;
+  }
+
+  .rightSideBarTopItem div:hover .rightSideBarTopItemRightUserDropDown {
+    display: block;
+    position: absolute;
+    width: 230px;
+    right: 0;
+    z-index: 10;
+  }
+
+  .rightSideBarTopItemRightUserDropDown div {
+    padding: 10px;
+    text-align: left !important;
+  }
+
+  .rightSideBarTopItemRightUserDropDown div span {
+    padding: 0px 2px 0px 2px;
+    background-color: red;
+  }
+
+  .rightSideBarTopItemRightUserDropDown label {
+    cursor: pointer;
+  }
+
+  .rightSideBarTopItemRightUserDropDown div:hover {
+    background-color: #cccccc;
+  }
+
+
+  /* Right Sidebar Ends */
+
+
+  /* Info */
+
+  .infoContainer {
+    position: fixed;
+    bottom: 0;
+    margin: 0 150px 90px 150px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: calc(100% - 400px);
+  }
+
+  .infoleft {
+    width: 100%;
+    margin-left: 60px;
+  }
+
+  .inforight {
+    width: 60%;
+    margin-right: 60px;
+  }
+
+  .infoGenre {
+    padding-bottom: 10px;
+  }
+
+  .infoGenre a {
+    font-size: 17px;
+    color: white;
+    text-decoration: none;
+    margin-right: 10px;
+  }
+
+  .infoGenre a:hover {
+    border-bottom: solid 2px white;
+  }
+
+  .infoTitle {
+    font-size: 52px;
+    color: white;
+  }
+
+  .infoTime {
+    color: white;
+  }
+
+  .infoStorylineTitle {
+    color: white;
+  }
+
+  .infoStoryLineContent {
+    color: white;
+  }
+
+
+  /* info ends */
+
+
+  /* Searchbar */
+
+  .searchBar {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: -100px;
+    z-index: 100;
+    padding: 5px 10px 5px 10px;
+    width: 100%;
+    height: 50px;
+    background-color: transparent;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .searchBar button {
+    font-size: 20px;
+    margin-left: 10px;
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    padding-top: 5px;
+    cursor: pointer;
+  }
+
+  .searchBar input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0);
+    height: 100%;
+    font-size: 20px;
+    border: solid;
+    border-width: 0 0 2px 0;
+    border-color: white;
+    color: white;
+  }
+
+
+  /* Mobile TopBar */
+
+  .mobileTopBar div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .mobileTopBar {
+    padding: 0px 20px 0px 20px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+    transition: 0.5s ease;
+  }
+
+  .mobileTopBarContainerUser {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .mobileTopBarContainerUser span {
+    margin-left: -2px;
+    position: absolute;
+    font-size: 10px;
+    background-color: red;
+    width: 12px;
+    border-radius: 100%;
+    color: white;
+  }
+
+  .mobileTopBarContainerLogo {
+    display: flex;
+    justify-content: center;
+  }
+
+  .mobileTopBarContainerLogo a {
+    font-size: 25px;
+    color: white;
+    text-decoration: none;
+  }
+
+  .mobileTopBarContainerSearch {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .mobileTopBarContainerSearch div i {
+    font-size: 29px;
+    color: white;
+  }
+
+
+  /* MobileTopBar Ends */
+
+
+  /* MobileBottomBar */
+
+  .mobileBottomBar {
+    padding: 0px 5px 0px 5px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+    transition: 0.5s ease;
+  }
+
+  .mobileBottomBar div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .mobileBottomBar div a {
+    text-decoration: none;
+    color: white;
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .mobileBottomBar div .active {
+    -webkit-text-stroke-color: #cccccc;
+  }
+
+
+  /* MobileBottomBar Ends */
+
+
+  /* TopBarGoBack */
+
+  .topBarGoBack {
+    position: fixed;
+    top: -100px;
+    width: 100%;
+    height: 50px;
+    z-index: 10;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .topBarGoBackInner {
+    margin: 15px 0 0 15px;
+    justify-content: space-between;
+  }
+
+  .topBarGoBackButtonStart {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .topBarGoBackButtonStart div {
+    font-size: 20px;
+    color: white;
+    font-family: 'Varela Round';
+    cursor: pointer;
+  }
+
+
+  /* TopBarGoBack Ends */
+
+
+  /* Recomended Bottom Bar */
+
+  .recomendedBottomBar {
+    width: 100%;
+    height: 170px;
+    position: absolute;
+    left: 0;
+    bottom: -500px;
+    z-index: 10;
+    box-shadow: 0 0.3px 0.7px rgba(0, 0, 0, 0.126), 0 0.9px 1.7px rgba(0, 0, 0, 0.179), 0 1.8px 3.5px rgba(0, 0, 0, 0.224), 0 3.7px 7.3px rgba(0, 0, 0, 0.277), 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .recomendedBottomBarTitle {
+    padding: 0 0 0 10px;
+    font-size: 20px;
+    color: white;
+  }
+
+  .recomendedBottomBarContentCenter {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .recomendedBottomBarJustifyContent {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow-y: hidden;
+  }
+
+  .recomendedBottomBarJustifyContent .card {
+    margin: 0 10px 0 10px;
+    text-align: center;
+  }
+
+  .recomendedBottomBarJustifyContent .card a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .recomendedBottomBarJustifyContent .card a img {
+    width: 97px;
+    height: 143px;
+  }
+
+  .recomendedBottomBarJustifyContent .card a div {
+    width: 200px;
+  }
+
+
+  /* Recomended Bottom Bar ends */
+
+
+  /* Till 1080 screen size */
+
+  @media only screen and (max-width: 1080px) {
+    .leftSideBar {
+      display: none;
+    }
+    .mobileTopBar {
+      display: flex;
+    }
+    .rightSideBarTopItem {
+      display: none;
+    }
+    .mobileBottomBar {
+      display: flex;
+    }
+    .playerContainer {
+      bottom: 50px;
+    }
+    .infoContainer {
+      top: 70px;
+      margin: 0 0px 0px 0px;
+      display: block;
+      max-width: 100%;
+      max-height: calc(100vh - 520px);
+    }
+    .infoleft {
+      margin-left: 10px;
+    }
+    .inforight {
+      display: none;
+    }
+    .rightSideBar {
+      left: 0;
+      bottom: 120px;
+      width: 100%;
+      height: 150px;
+      padding: 0px 0px;
+      overflow-y: hidden;
+    }
+    .rightSideBarInner {
+      left: 0;
+      flex-direction: row;
+      overflow-y: hidden;
+    }
+    .rightSideBarInnerContainer {
+      flex-direction: row;
+      overflow-y: hidden;
+      padding: 0;
+    }
+    .rightSideBarInnerContainer::-webkit-scrollbar {
+      height: 0px;
+      width: 0px;
+    }
+    .rightSideBarInnerContainer a {
+      padding: 0;
+      width: 100px;
+      height: 100px;
+    }
+    .video_played {
+      display: none;
+    }
+    .rightSideBarInnerContainer a img {
+      width: 100px;
+      height: 147px;
+    }
+    .rightSideBarInnerContainer a div {
+      display: none;
+    }
+    .rightSideBarInnerContainer .card {
+      margin: 0px 0px 0px 10px;
+    }
+  }
+
+
+  /* Till 1080 screen size Ends */
+
+
+  /* From 4680 screen size */
+
+  @media only screen and (min-width: 4680px) {
+    html {
+      overflow-x: hidden;
+    }
+    .searchBar {
+      height: 100px;
+    }
+    .searchBar input {
+      font-size: 40px;
+      border-radius: 0 0 7px 0;
+    }
+    .searchBar button {
+      font-size: 40px;
+    }
+    .leftSideBar {
+      padding-top: 40px;
+      width: 500px;
+      height: calc(100% - 60px);
+    }
+    .leftSideBar_contents a {
+      width: 500px;
+      font-size: 80px;
+    }
+    .logo_container {
+      width: 500px;
+    }
+    .logo_container a img {
+      width: 250px;
+    }
+    .rightSideBarTopItem {
+      width: 500px;
+      height: 150px;
+    }
+    .rightSideBarTopItem div {
+      font-size: 50px;
+      height: 100%;
+    }
+    .rightSideBarTopItem div span {
+      width: 30px;
+      height: 30px;
+      font-size: 30px;
+    }
+    .rightSideBarTopItem div img {
+      width: 100px;
+      height: 100px;
+    }
+    .rightSideBarTopItemRight {
+      height: 100%;
+    }
+    .rightSideBarTopItemRight div i {
+      padding: 30px 0px 30px 0px;
+    }
+    .rightSideBarTopItemInfo {
+      padding: 30px 0px 30px 0px;
+    }
+    .rightSideBarInnerContainer {
+      padding: 0 0 80px 0;
+    }
+    .video_played {
+      left: 22px;
+      max-width: 80%;
+    }
+    .rightSideBarInnerContainer a div {
+      width: 500px;
+    }
+    .rightSideBarInnerContainer .card a div {
+      width: 450px;
+    }
+    .rightSideBarInnerContainer a {
+      width: 500px;
+      font-size: 40px;
+    }
+    .rightSideBarInnerContainer a img {
+      width: 400px;
+      height: 589px;
+    }
+    .rightSideBarTopItemRightUserDropDown {
+      width: 500px !important;
+      height: 100px !important;
+    }
+    .rightSideBar {
+      padding: 160px 0px 10px 0px;
+      width: 500px;
+    }
+    .playButtonMain {
+      width: 200px;
+      height: 200px;
+    }
+    .playButtonMain i {
+      top: 50%;
+      font-size: 190px;
+    }
+    .playButtonMain a {
+      font-size: 500px;
+    }
+    .infoContainer {
+      margin: 0 500px 150px 500px;
+      max-width: calc(100% - 1000px);
+    }
+    .infoleft {
+      width: 100%;
+      margin-left: 60px;
+    }
+    .inforight {
+      width: 60%;
+      margin-right: 60px;
+    }
+    .infoGenre {
+      padding-bottom: 10px;
+    }
+    .infoGenre a {
+      font-size: 57px;
+    }
+    .infoTitle {
+      font-size: 122px;
+    }
+    .infoTime {
+      font-size: 30px;
+    }
+    .infoStorylineTitle {
+      font-size: 57px;
+    }
+    .infoStoryLineContent {
+      font-size: 40px;
+    }
+    .playerContainer {
+      height: 140px;
+    }
+    .topcontainer {
+      display: flex;
+      justify-content: space-between;
+      width: calc(100% - 40px);
+      height: 40px;
+      margin: 10px 10px 0px 10px;
+    }
+    .timeControllerContainer {
+      border-radius: 35px 0px 0px 35px;
+      margin-top: 8px;
+      width: 100%;
+      height: 20px;
+      background-color: #cccccc;
+      cursor: pointer;
+    }
+    .payedTimeControllerContainer {
+      position: absolute;
+      height: 20px;
+      width: 0%;
+      background-color: white;
+    }
+    .playerTimePosition {
+      width: 0px;
+      height: 0px;
+    }
+    .timeControllerContainer:hover .playerTimePosition {
+      height: 32px;
+      width: 10px;
+      top: -5px;
+      right: -10px;
+    }
+    .EndTimeControllerContainer {
+      padding-left: 20px;
+      font-size: 40px;
+    }
+    .SongInfo {
+      padding-top: 18px;
+      padding-left: 20px;
+      width: 50%;
+      font-size: 40px;
+    }
+    .SongInfo span {
+      font-size: 40px;
+    }
+    .musicControllerCenter {
+      max-width: 550px;
+    }
+    .musicControllerUndo {
+      margin-top: 12px;
+      margin-left: 5px;
+      font-size: 40px;
+    }
+    .musicControllerRedo {
+      font-size: 40px;
+    }
+    .musicControllermarginTop {
+      font-size: 40px;
+    }
+    .musicControllerPlayButton {
+      font-size: 40px;
+    }
+    .secondaryControllerEnd {
+      font-size: 40px;
+      max-width: 190px;
+      margin-right: 40px;
+    }
+    .secondaryControllerEndInner {
+      margin-top: 10px;
+      font-size: 40px;
+    }
+  }
+
+
+  /* From 4680 screen size ends */
+
+
+  /* Video And Main Middle */
+
+  #video-js-container {
+    display: none;
+  }
+
+  #myVidOuter {
+    display: block;
+  }
+
+  #recomendedBottomBarContainer {
+    display: block;
+  }
+
+  #topBarGoBackContainer {
+    display: block;
+  }
+
+
+  /* Video And Main Middle Ends */
+</style>
+<body>
+   <div id="topBarGoBackContainer">
+      <div class="topBarGoBack backdrop-blur backdrop-black" id="topBarGoBack">
+         <div class="topBarGoBackInner">
+            <div class="topBarGoBackButtonStart" onclick="closeButtonMain()">
+               <div><i class="fa fa-arrow-left"></i></div>
+               <div style="padding: 0 0 0 10px;">Aquaman</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="mobileTopBar backdrop-blur backdrop-black" id="mobileTopBar">
+      <div>
+         <a href="/user" class="mobileTopBarContainerUser">
+            <div>
+               <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=30&h=30&q=80" style="border-radius: 50%; width: 30px; height: 30px;"><span>1</span>
+            </div>
+         </a>
+         <div class="mobileTopBarContainerLogo">
+            <a href="/" class="logo">
+            <img src="image/logo/mixio/mixio_2.svg"> ixio
+            </a>
+         </div>
+         <div class="mobileTopBarContainerSearch">
+            <div onclick="searchInputToggle()">
+               <i class="fa fa-search"></i>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="searchBar backdrop-blur backdrop-black" id="searchBar">
+      <input type="text" placeholder="Search.." id="searchBarInput">
+      <button><i class="fa fa-arrow-right"></i></button>
+   </div>
+   <div class="leftSideBar backdrop-blur backdrop-black" id="leftSideBar">
+      <div class="leftSideBar_Inner">
+         <div class="logo_container">
+            <a href="/" class="logo">
+            <img src="image/logo/mixio/mixio_3.png">
+            </a>
+         </div>
+         <div class="leftSideBar_contents">
+            <a href="/" class="active">
+            Movies
+            </a>
+            <a href="/">
+            Series
+            </a>
+            <a href="/">
+            Anime
+            </a>
+            <a href="">
+            Kids
+            </a>
+            <a href="/">
+            Cinema
+            </a>
+         </div>
+         <div class="leftSideBar_contents">
+         </div>
+      </div>
+   </div>
+   <div class="rightSideBarTopItem" id="rightSideBarTopItem">
+      <div class="rightSideBarTopItemInfo">
+         Movies
+      </div>
+      <div class="rightSideBarTopItemRight">
+         <div onclick="searchInputToggle()">
+            <i class="fa fa-search"></i>
+         </div>
+         <div>
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=25&h=25&q=80" style="border-radius: 50%;">
+            <div class="rightSideBarTopItemRightUserDropDown">
+               <div class=" backdrop-blur backdrop-black"><i class="fa fa-gift"></i> Gifts <span>1</span></div>
+               <div class=" backdrop-blur backdrop-black"><i class="fa fa-bell"></i> Notification</div>
+               <div class=" backdrop-blur backdrop-black"><i class="fa fa-user"></i> Manage Profile</div>
+               <div class=" backdrop-blur backdrop-black"><input type="checkbox" name="endStartSkip" id="endStartSkip"> <label for="endStartSkip">Skip Intro/ Outro</label></div>
+               <div class=" backdrop-blur backdrop-black">Account</div>
+               <div class=" backdrop-blur backdrop-black">Help Center</div>
+               <div class=" backdrop-blur backdrop-black">Logout</div>
+            </div>
+            <span>1</span>
+         </div>
+      </div>
+   </div>
+   <div class="rightSideBar backdrop-blur backdrop-black" id="rightSideBar">
+      <div class="rightSideBarInner">
+         <div class="rightSideBarInnerContainer">
+            <div class="card" href="/aquaman">
+               <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BOTk5ODg0OTU5M15BMl5BanBnXkFtZTgwMDQ3MDY3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  <span class="video_played" style="width: 50%;">
+                  </span>
+                  <div>Aquaman</div>
+               </a>
+            </div>
+            <div class="card" href="/aquaman">
+               <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BODJkZTZhMWItMDI3Yy00ZWZlLTk4NjQtOTI1ZjU5NjBjZTVjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_UY268_CR1,0,182,268_AL_.jpg">
+                  <span class="video_played" style="width: 100%;">
+                  </span>
+                  <div>Kangu Fu Panda</div>
+               </a>
+            </div>
+            <div class="card" href="/aquaman">
+               <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  <div>Spider-Man: Into the Spider-Verse</div>
+               </a>
+            </div>
+            <div class="card" href="/aquaman">
+               <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMTk3ZGM2YzQtMmYxYy00NDZjLWFmOTUtZTQwMzg0ZjA5ZjU3XkEyXkFqcGdeQXVyODk2NDQ3MTA@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  <div>No Time to Die</div>
+               </a>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="middleContainer">
+      <div id="myVidOuter">
+         <div style='height: 100vh; width: 100%;background: url(back.jpg); background-size: cover; background-position: center;'>
+            <div class="playButtonMain" id="playButtonMain">
+               <div onclick="playButtonMain()"><i class="fa fa-play"></i></div>
+            </div>
+            <!-- <div class="ticketButtonMain" id="ticketButtonMain">
+               <div><i id="ticketButtonContainer" class="fa fa-ticket-alt"></i></div>
+               </div> -->
+         </div>
+      </div>
+      <div id="video-js-container">
+         <video id="video-js" class="video-js videoMixio" controls preload="auto" autoplay="autoplay"  data-setup="{}">
+            <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4#t=10" type="video/mp4" />
+            <p class="vjs-no-js">
+               To view this video please enable JavaScript, and consider upgrading to a
+               web browser that
+               <a href="https://videojs.com/html5-video-support/" target="_blank"
+                  >supports HTML5 video</a
+                  >
+            </p>
+         </video>
+      </div>
+   </div>
+   <div class="infoContainer" id="infoContainer">
+      <div class="infoleft">
+         <div class="infoGenre">
+            <a href="/tag/">ACTION</a>
+            <a href="/tag/">ADVENTURE</a>
+            <a href="/tag/">FANTASY</a>
+         </div>
+         <div class="infoTitle">
+            AQUAMAN
+         </div>
+         <div class="infoTime">
+            2h 23 mins
+         </div>
+      </div>
+      <div class="inforight">
+         <b class="infoStorylineTitle">STORYLINE</b>
+         <div class="infoStoryLineContent">Arthur Curry, the human-born heir to the underwater kingdom of Atlantis, goes on a quest to prevent a war between the worlds of ocean and land.</div>
+      </div>
+   </div>
+   <div class="backdrop-blur backdrop-black playerContainer" id="playerContainer">
+    <div class="topcontainer">
+      <div class="timeControllerContainer">
+        <div class="payedTimeControllerContainer">
+          <div class="playerTimePosition"></div>
+        </div>
+      </div>
+      <div class="EndTimeControllerContainer">28:35</div>
+    </div>
+    <div class="bottomcontainer">
+      <div class="SongInfo">
+        <span>Ambient Sounds </span>
+        -
+        <span> Andrew McKey</span>
+      </div>
+      <div class="musicController">
+        <div class="musicControllerCenter">
+          <div class="musicControllerUndo displaynone235px"><i class="fa fa-undo-alt"></i></div>
+          <div class="musicControllermarginTop"><i class="fa fa-fast-backward"></i></div>
+          <div class="musicControllerPlayButton"><i class="fa fa-play"></i></div>
+          <div class="musicControllermarginTop"><i class="fa fa-fast-forward"></i></div>
+          <div class="musicControllerRedo displaynone235px"><i class="fa fa-redo-alt"></i></div>
+        </div>
+      </div>
+      <div class="secondaryController">
+        <div class="secondaryControllerEnd">
+          <div class="secondaryControllerEndInner smallDisplayNone"><i class="fa fa-expand"></i></div>
+          <div class="secondaryControllerEndInner smallDisplayNone"><i class="fa fa-tape"></i></div>
+          <div class="secondaryControllerEndInner"><i class="fa fa-share"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <div class="rightSideBarTopItem" id="rightSideBarTopItem">
+      <div class="rightSideBarTopItemInfo">
+         Movies
+      </div>
+      <div class="rightSideBarTopItemRight">
+         <div onclick="searchInputToggle()">
+            <i class="fa fa-search"></i>
+         </div>
+         <div>
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=25&h=25&q=80" style="border-radius: 50%;">
+            <div class="rightSideBarTopItemRightUserDropDown">
+               <div class=" backdrop-blur backdrop-black"><i class="fa fa-gift"></i> Gifts <span>1</span></div>
+               <div class=" backdrop-blur backdrop-black"><i class="fa fa-bell"></i> Notification</div>
+               <div class=" backdrop-blur backdrop-black"><i class="fa fa-user"></i> Manage Profile</div>
+               <div class=" backdrop-blur backdrop-black">Account</div>
+               <div class=" backdrop-blur backdrop-black">Help Center</div>
+               <div class=" backdrop-blur backdrop-black">Logout</div>
+            </div>
+            <span>1</span>
+         </div>
+      </div>
+   </div>
+   <div id="recomendedBottomBarContainer">
+      <div class="recomendedBottomBar backdrop-blur backdrop-black" id="recomendedBottomBar">
+         <div class="recomendedBottomBarTitle" id="recomendedBottomBarTitle">Recomended: </div>
+         <div class="recomendedBottomBarContentCenter">
+            <div class="recomendedBottomBarJustifyContent">
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BOTk5ODg0OTU5M15BMl5BanBnXkFtZTgwMDQ3MDY3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BODJkZTZhMWItMDI3Yy00ZWZlLTk4NjQtOTI1ZjU5NjBjZTVjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_UY268_CR1,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMTk3ZGM2YzQtMmYxYy00NDZjLWFmOTUtZTQwMzg0ZjA5ZjU3XkEyXkFqcGdeQXVyODk2NDQ3MTA@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BOTk5ODg0OTU5M15BMl5BanBnXkFtZTgwMDQ3MDY3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BODJkZTZhMWItMDI3Yy00ZWZlLTk4NjQtOTI1ZjU5NjBjZTVjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_UY268_CR1,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMTk3ZGM2YzQtMmYxYy00NDZjLWFmOTUtZTQwMzg0ZjA5ZjU3XkEyXkFqcGdeQXVyODk2NDQ3MTA@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BOTk5ODg0OTU5M15BMl5BanBnXkFtZTgwMDQ3MDY3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BODJkZTZhMWItMDI3Yy00ZWZlLTk4NjQtOTI1ZjU5NjBjZTVjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_UY268_CR1,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMTk3ZGM2YzQtMmYxYy00NDZjLWFmOTUtZTQwMzg0ZjA5ZjU3XkEyXkFqcGdeQXVyODk2NDQ3MTA@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BOTk5ODg0OTU5M15BMl5BanBnXkFtZTgwMDQ3MDY3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BODJkZTZhMWItMDI3Yy00ZWZlLTk4NjQtOTI1ZjU5NjBjZTVjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_UY268_CR1,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+               <div class="card" href="/aquaman">
+                  <a onclick="">
+                  <img src="https://m.media-amazon.com/images/M/MV5BMTk3ZGM2YzQtMmYxYy00NDZjLWFmOTUtZTQwMzg0ZjA5ZjU3XkEyXkFqcGdeQXVyODk2NDQ3MTA@._V1_UX182_CR0,0,182,268_AL_.jpg">
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="mobileBottomBar backdrop-blur backdrop-black" id="mobileBottomBar">
+      <div>
+         <a href="/" class="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+               <g fill="none" stroke="#fff" stroke-width="1.5" stroke-miterlimit="10" stroke-linejoin="round" stroke-linecap="round">
+                  <path d="M3.2 12.8h19.6v9.5c0 .5-.4.9-1 .9H4.1c-.5 0-1-.4-1-.9v-9.5"></path>
+                  <path d="M3.3 13.1l-2-4.4c-.2-.5 0-1 .5-1.2L18 .8c.5-.2 1.1 0 1.3.5l1.8 4-17.5 7.3"></path>
+                  <path d="M15 2.1l-.9 6M8 4.7l-1.2 6.6"></path>
+               </g>
+            </svg>
+         </a>
+         <a href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+               <g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-miterlimit="10">
+                  <path d="M21.4 23H2.6c-.9 0-1.6-.7-1.6-1.6V8.9c0-.9.7-1.6 1.6-1.6h18.9c.8 0 1.5.7 1.5 1.6v12.6c0 .8-.7 1.5-1.6 1.5zM6.4 1L12 7M17.6 1L12 7"></path>
+               </g>
+            </svg>
+         </a>
+         <a href="/?q=anime"  aria-label="anime">
+            <svg width="24" height="23.993" version="1.1" viewBox="0 0 2.8125 2.8117" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+               <g transform="matrix(.087865 0 0 .087865 -1.2312 -1.2309)" fill="#fff">
+                  <path d="m45.542 41.5c0.31012-0.1892 0.49324-0.5317 0.47835-0.89468-0.0149-0.36297-0.22547-0.68932-0.55005-0.85247-0.32458-0.16315-0.71211-0.13745-1.0123 0.067149-7.938 5.127-19.4 6.662-25.8-2.084-2.2648-3.0856-3.131-6.98-2.3877-10.735s3.028-7.0253 6.2977-9.0153c8.359-5.4 19.71 1.045 18.183 9.306-0.45049 2.3622-1.8639 4.4302-3.901 5.708-3.3385 2.1528-7.7698 1.3877-10.193-1.76-0.83004-1.1322-1.1465-2.5609-0.87206-3.9376s1.1144-2.575 2.3151-3.3024c3-1.939 7.075 0.344 6.546 3.209-0.1561 0.80725-0.64125 1.5131-1.339 1.948-0.29939 0.19525-0.47187 0.53538-0.45248 0.89228 0.01939 0.3569 0.22772 0.67634 0.5465 0.838s0.69959 0.14096 0.99898-0.05428c1.1624-0.73238 1.9671-1.9158 2.221-3.266 0.86-4.654-5.192-8.1-9.6-5.252-1.6665 1.0243-2.8284 2.6992-3.2042 4.6189-0.37577 1.9197 0.06886 3.9091 1.2262 5.4861 3.0558 3.9914 8.6615 4.9732 12.892 2.258 2.5026-1.574 4.2367-4.119 4.786-7.024 1.863-10.082-11.506-17.633-21.235-11.349-3.7331 2.2881-6.3373 6.035-7.1808 10.331s0.15088 8.7499 2.7418 12.28c6.553 8.96 18.583 8.984 28.495 2.584z" fill="#fff"/>
+               </g>
+            </svg>
+         </a>
+         <a href="/"><i class="fa fa-neuter custom-fa"></i></a>
+         <a href="/">
+            <svg width="5.2917mm" height="5.2916mm" version="1.1" viewBox="0 0 5.2917 5.2916" xmlns="http://www.w3.org/2000/svg">
+               <g transform="translate(25.987 33.753)">
+                  <g transform="matrix(.26458 0 0 .26458 -25.987 -33.754)">
+                     <g transform="matrix(.041853 0 0 .041853 0 .0034214)">
+                        <path d="m472.18 4.349c-3.627-3.216-8.44-4.759-13.261-4.25l-307.2 34.133c-8.647 0.957-15.19 8.265-15.189 16.964v304.13c-15.474-9.239-33.178-14.078-51.2-13.995-47.053 1e-3 -85.334 30.619-85.334 68.268s38.281 68.267 85.333 68.267 85.333-30.618 85.333-68.267v-257.71l273.07-30.43v199.68c-15.48-9.221-33.182-14.042-51.2-13.943-47.053 0-85.333 30.618-85.333 68.267s38.281 68.267 85.333 68.267 85.333-30.618 85.333-68.267v-358.4c0-4.854-2.066-9.478-5.682-12.715zm-386.85 439.38c-27.75 0-51.2-15.633-51.2-34.133s23.45-34.133 51.2-34.133 51.2 15.633 51.2 34.133-23.449 34.133-51.2 34.133zm307.2-34.133c-27.75 0-51.2-15.633-51.2-34.133s23.45-34.133 51.2-34.133 51.2 15.633 51.2 34.133-23.449 34.133-51.2 34.133zm51.2-322.48-273.07 30.345v-50.91l273.07-30.43z" style="fill:#fff"/>
+                     </g>
+                  </g>
+               </g>
+            </svg>
+         </a>
+      </div>
+   </div>
+   <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+   <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://cdn.sc.gl/videojs-hotkeys/latest/videojs.hotkeys.min.js"></script>
+   <script src="js/videojs-upnext.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous"></script>
+   <script src="https://unpkg.com/videojs-overlay-buttons@latest/dist/videojs-overlay-buttons.min.js"></script>
+   <script type="text/javascript">
+      lessthan1080 = false;
+      fullScreen = false;
+      videoActive = false;
+      var browser = (function () {
+        var ua = navigator.userAgent,
+          tem,
+          M =
+          ua.match(
+            /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i
+          ) || [];
+        if (/trident/i.test(M[1])) {
+          tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+          return {
+            name: "IE",
+            version: tem[1] || ""
+          };
+        }
+
+        if (M[1] === "Chrome") {
+          tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+          if (tem != null) {
+            return {
+              name: tem[1].replace("OPR", "Opera"),
+              version: tem[2]
+            };
+          }
+        }
+
+        M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, "-?"];
+
+        if ((tem = ua.match(/version\/(\d+)/i)) != null) {
+          M.splice(1, 1, tem[1]);
+        }
+
+        return {
+          name: M[0],
+          version: M[1]
+        };
+      })();
+      console.log([browser.name, browser.version])
+
+
+      var player = videojs('video-js');
+      player.poster('back.jpg');
+
+      function getTitle() {
+        return "Next Episode";
+      }
+
+      function next() {
+        if (videoActive) {
+          player.poster('https://i.ytimg.com/vi/PVGeM40dABA/maxresdefault.jpg');
+          player.src('https://upload.wikimedia.org/wikipedia/commons/transcoded/3/3f/Coffee_Run_-_Blender_Open_Movie-full_movie.webm/Coffee_Run_-_Blender_Open_Movie-full_movie.webm.360p.vp9.webm');
+        }
+      }
+
+      player.upnext({
+        timeout: 2000,
+        getTitle: getTitle,
+        next: next
+      });
+      videojs('video-js').ready(function () {
+        this.hotkeys({
+          volumeStep: 0.1,
+          seekStep: 5,
+          enableMute: true,
+          enableFullscreen: true,
+          enableNumbers: false,
+          enableVolumeScroll: true,
+          enableHoverScroll: true,
+
+          // Mimic VLC seek behavior, and default to 5.
+          seekStep: function (e) {
+            if (e.ctrlKey && e.altKey) {
+              return 5 * 60;
+            } else if (e.ctrlKey) {
+              return 60;
+            } else if (e.altKey) {
+              return 10;
+            } else {
+              return 5;
+            }
+          },
+
+          // Enhance existing simple hotkey with a complex hotkey
+          fullscreenKey: function (e) {
+            // fullscreen with the F key or Ctrl+Enter
+            return ((e.which === 70) || (e.ctrlKey && e.which === 13));
+          },
+
+          // Custom Keys
+          customKeys: {
+
+            // Add new simple hotkey
+            simpleKey: {
+              key: function (e) {
+                // Toggle something with S Key
+                return (e.which === 83);
+              },
+              handler: function (player, options, e) {
+                // Example
+                if (player.paused()) {
+                  player.play();
+                } else {
+                  player.pause();
+                }
+              }
+            },
+
+            // Add new complex hotkey
+            complexKey: {
+              key: function (e) {
+                // Toggle something with CTRL + D Key
+                return (e.ctrlKey && e.which === 68);
+              },
+              handler: function (player, options, event) {
+                // Example
+                if (options.enableMute) {
+                  player.muted(!player.muted());
+                }
+              }
+            },
+
+            // Override number keys example from https://github.com/ctd1500/videojs-hotkeys/pull/36
+            numbersKey: {
+              key: function (event) {
+                // Override number keys
+                return ((event.which > 47 && event.which < 59) || (event.which > 95 && event.which < 106));
+              },
+              handler: function (player, options, event) {
+                // Do not handle if enableModifiersForNumbers set to false and keys are Ctrl, Cmd or Alt
+                if (options.enableModifiersForNumbers || !(event.metaKey || event.ctrlKey || event.altKey)) {
+                  var sub = 48;
+                  if (event.which > 95) {
+                    sub = 96;
+                  }
+                  var number = event.which - sub;
+                  player.currentTime(player.duration() * number * 0.1);
+                }
+              }
+            },
+            withoutKey: {
+              handler: function (player, options, event) {
+                console.log('withoutKey handler');
+              }
+            },
+
+            withoutHandler: {
+              key: function (e) {
+                return true;
+              }
+            },
+
+            malformedKey: {
+              key: function () {
+                console.log('I have a malformed customKey. The Key function must return a boolean.');
+              },
+              handler: function (player, options, event) {
+                //Empty
+              }
+            }
+          }
+        });
+      });
+
+      if (document.addEventListener) {
+        document.addEventListener('fullscreenchange', exitHandler, false);
+        document.addEventListener('mozfullscreenchange', exitHandler, false);
+        document.addEventListener('MSFullscreenChange', exitHandler, false);
+        document.addEventListener('webkitfullscreenchange', exitHandler, false);
+      }
+
+      $('video').on('play', function (e) {
+        $('#recomendedBottomBarContainer').hide();
+        $('#topBarGoBackContainer').hide();
+        $('#videoPlayerPausePlay').html('<div class="musicControllerPlayButton" onclick="pauseVideo()"><i class="fa fa-pause"></i></div>')
+        $('#playVideoButtonWhenVideoPause').hide()
+      });
+
+      $('video').on('pause', function (e) {
+        $('#recomendedBottomBarContainer').show();
+        $('#topBarGoBackContainer').show();
+        $('#videoPlayerPausePlay').html('<div class="musicControllerPlayButton" onclick="playVideo()"><i class="fa fa-play"></i></div>')
+        $('#playVideoButtonWhenVideoPause').show()
+      });
+
+      $('video').on('end', function (e) {
+        $('#recomendedBottomBarContainer').show();
+        $('#topBarGoBackContainer').show();
+        $('#myVidOuter').show();
+        $('#video-js-container').hide();
+        $('#videoPlayerPausePlay').html('<div class="musicControllerPlayButton" onclick="playVideo()"><i class="fa fa-play"></i></div>')
+        $('#playVideoButtonWhenVideoPause').show()
+      });
+
+      var elem = document.getElementById("video-js");
+
+      function openFullscreen() {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+          elem.msRequestFullscreen();
+        }
+      }
+
+      function closeFullscreen() {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+          document.msExitFullscreen();
+        }
+      }
+      $('#ticketButtonContainer').hover(function () {
+        $('.notifyjs-corner').empty();
+        $.notify('Buy Movie Hall Ticket?', {
+          style: 'happyblue',
+          position: 'R,B',
+          autoHideDelay: 2000,
+        });
+      })
+      $(document).ready(function () {
+        $(".vjs-control-bar").append('<div class="backdrop-blur backdrop-black playerContainer" id="VideoMainPlayer"><div class="topcontainer" id="topcontainer"></div></div>');
+        $('#topcontainer').append($(".vjs-progress-holder"));
+        $('#topcontainer').append($(".vjs-remaining-time"));
+        if ($(window).width() <= 1080) {
+          lessthan1080 = true
+        } else if ($(window).width() <= 1080 || $(window).width() >= 4080) {
+          options = {
+            seekLeft: {},
+            play: {},
+            seekRight: {},
+          }
+          player.touchOverlay(options);
+        } else {
+          $('#video-js-container').append('<div class="playButtonMain" id="playVideoButtonWhenVideoPause" onclick="playVideoButtonWhenVideoPause()"><div><i class="fa fa-play"></i></div></div>');
+
+        }
+
+        $("#VideoMainPlayer").append(`
+                <div class="bottomcontainer" id="bottomcontainer">
+                <div class="SongInfo" id="SongInfo">
+                  <span id="SongInfo_Music">Ambient Sounds </span>
+                  -
+                  <span id="SongInfo_Artist"> Andrew McKey</span>
+                </div>
+                <div class="musicController" id="musicController">
+                  <div class="musicControllerCenter" id="musicControllerCenter">
+                    <div class="musicControllerUndo displaynone235px"><i class="fa fa-undo-alt"></i></div>
+                    <div class="musicControllermarginTop"><i class="fa fa-fast-backward"></i></div>
+                    <div id="videoPlayerPausePlay"><div class="musicControllerPlayButton" onclick="playVideo()"><i class="fa fa-play"></i></div></div>
+                    <div class="musicControllermarginTop"><i class="fa fa-fast-forward"></i></div>
+                    <div class="musicControllerRedo displaynone235px"><i class="fa fa-redo-alt"></i></div>
+                  </div>
+                </div>
+                <div class="secondaryController" id="secondaryController">
+                  <div class="secondaryControllerEnd" id="secondaryControllerEnd">
+                    <div id="fullScreenToggleButton" class="secondaryControllerEndInner"><div  onclick="openFullscreen()"><i class="fa fa-expand"></i></div></div>
+                    <div class="secondaryControllerEndInner smallDisplayNone"><i class="fa fa-tape"></i></div>
+                    <div class="secondaryControllerEndInner smallDisplayNone"><i class="fa fa-share"></i></div>
+                  </div>
+                </div>
+              </div>`);
+
+        $(".vjs-play-control").hide();
+        $(".vjs-fullscreen-control").hide();
+        $('.vjs-big-play-button').html('<div class="playButtonMainVideo" id="playButtonMainVideo"><div><i class="fa fa-play"></i></div></div>')
+      });
+      document.querySelector('video').addEventListener('play', evt => {
+        if (lessthan1080) {
+          // alert($(window).width())
+          openFullscreen()
+          fullScreen = true;
+        }
+      });
+
+      function exitHandler() {
+        if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null) {
+          if (lessthan1080) {
+            if (fullScreen) {
+              $('#fullScreenToggleButton').html('<div onclick="openFullscreen()"><i class="fa fa-expand"></i></div>');
+              $('video').trigger('play');
+              fullScreen = false
+            } else {
+              $('#fullScreenToggleButton').html('<div onclick="closeFullscreen()"><i class="fa fa-compress"></i></div>');
+              $('video').trigger('pause');
+              fullScreen = true
+            }
+          }
+          if (fullScreen) {
+            $('#fullScreenToggleButton').html('<div onclick="openFullscreen()"><i class="fa fa-expand"></i></div>');
+            fullScreen = false
+          } else {
+            $('#fullScreenToggleButton').html('<div onclick="closeFullscreen()"><i class="fa fa-compress"></i></div>');
+            fullScreen = true
+          }
+        }
+      }
+
+      function playButtonMain() {
+        $('#mobileTopBar').animate({
+          'top': '-100px'
+        });
+        $('#leftSideBar').animate({
+          'left': '-800px'
+        });
+        $('#rightSideBarTopItem').animate({
+          'right': '-800px'
+        });
+        if (lessthan1080) {
+          $('#rightSideBar').animate({
+            'left': '-800px'
+          });
+          $('#infoContainer').animate({
+            'top': '-700px'
+          });
+        } else {
+          $('#rightSideBar').animate({
+            'right': '-800px'
+          });
+          $('#infoContainer').animate({
+            'bottom': '-800px'
+          });
+        }
+        $('#mobileBottomBar').animate({
+          'bottom': '-500px'
+        });
+        $('#playerContainer').animate({'bottom': '-500px'});
+        $('#topBarGoBack').animate({
+          'top': '0px'
+        });
+        $('#recomendedBottomBar').animate({
+          'bottom': '0px'
+        });
+        $('#myVidOuter').hide();
+        $('#video-js-container').show();
+        videoActive = true;
+        if (lessthan1080) {
+          $.notify("If video doesn't play just double tap the screen.", {
+            style: 'happyblue',
+            position: 'R,B',
+            autoHideDelay: 2000,
+          });
+        }
+      }
+
+      function closeButtonMain() {
+        $('#mobileTopBar').animate({
+          'top': '0px'
+        });
+        $('#leftSideBar').animate({
+          'left': '0px'
+        });
+        $('#rightSideBarTopItem').animate({
+          'right': '0px'
+        });
+        if (lessthan1080) {
+          $('#rightSideBar').animate({
+            'left': '0'
+          });
+          $('#playerContainer').animate({'bottom': '50px'});
+          $('#infoContainer').animate({
+            'top': '70px'
+          });
+        } else {
+          $('#rightSideBar').animate({
+            'right': '0px'
+          });
+          $('#infoContainer').animate({
+            'bottom': '0px'
+          });
+          $('#playerContainer').animate({'bottom': '0px'});
+        }
+        $('#mobileBottomBar').animate({
+          'bottom': '0px'
+        });
+        $('#topBarGoBack').animate({
+          'top': '-100px'
+        });
+        $('#recomendedBottomBar').animate({
+          'bottom': '-500px'
+        });
+        $('#myVidOuter').show();
+        $('#video-js-container').hide();
+        videoActive = false;
+      }
+
+      function display_modal() {
+        $('body').append('<div style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;background-color:rgba(0,0,0,0.5);" onclick="disable_modal()" id="modal_disabler"> </div>')
+      }
+
+      function disable_modal(argument) {
+        $('#searchBar').animate({
+          'top': '-100px'
+        });
+        $('#modal_disabler').remove();
+      }
+
+      function searchInputToggle() {
+        $('#searchBar').animate({
+          'top': '0px'
+        });
+        $('#searchBarInput').focus();
+        display_modal();
+      }
+
+      function playVideoButtonWhenVideoPause() {
+        playVideo()
+      }
+
+      function playVideo() {
+        $('video').trigger('play')
+      }
+
+      function pauseVideo() {
+        $('video').trigger('pause')
+      }
+      $.notify.addStyle('happyblue', {
+        html: "<div><span data-notify-text/></div>",
+        classes: {
+          base: {
+            "white-space": "nowrap",
+            "background-color": "white",
+            "padding": "10px"
+          }
+        }
+      });
+      $.notify('Psst! 👋', {
+        style: 'happyblue',
+        position: 'R,B',
+        autoHideDelay: 2000,
+      });
+   </script>
+</body>
+</html>
