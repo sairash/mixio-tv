@@ -1,5 +1,5 @@
-![Patra](https://img.shields.io/github/license/sairash/Patra)<br/>
-<img src="screenshots/patra_logo.PNG"><br/>
+![mixio-tv](https://img.shields.io/github/license/sairash/Patra)<br/>
+<img src="image/logo/mixio/mixio_4.png"><br/>
 # Mixio-Tv
  slick looking website where you can watch movies
  
