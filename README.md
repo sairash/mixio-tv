@@ -3,18 +3,16 @@
 # Mixio-Tv
  slick looking website where you can watch movies
  
- # Website
+ # `Website`
  
-```
 [a link](sairash.github.io/mixio-tv)
- ```
  
 # ` Demo Gif`
 <img src="screenshots/Demo Mixio-tv.gif"><br/>
 
 
 # ` Main Page`
-<img src="screenshots/mainPage.PNG"><br/>
+<img src="screenshots/main page.PNG"><br/>
 
 # ` Search`
 <img src="screenshots/search movies.PNG"><br/>
